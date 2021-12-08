@@ -1,0 +1,158 @@
+---
+title: "Final Project"
+author: "Yena Kim"
+date: '2021 12 17 '
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What question(s) am I interested in?
+
+Why do international bureaucrats influence some recipient performance in World Bank projects but not others?
+
+## What are my independent and dependent variables? How do I plan to measure the variables?
+
+My dependent variables will be staff-level variables, namely the influence of World Bank bureaucrats. I will employ the replication data of Heinzel and Liese (2021) to measure staff influence. They used three variables to measure international bureaucrats influence on recipient performance in World Bank projects: Staff Supervision,  Staff Leniency, Staff Experience. 
+
+My independent variables is the preferences of U.S. over recipients (Affinity with the US). I will measure the ideal point distances from the US to operationalize the preferences of US. over recipients. Ideal point distances between the U.S. and recipients show how much the U.S. and recipients have different ideas in terms of their foreign policies as demonstrated in UN voting. This variable can also reflect how much the U.S. favor recipients.
+
+## Which dataset(s) will you use? 
+
+I will employ the replication data of Heinzel and Liese (2021).
+
+```{r}
+
+load("C:/Rworkingdirectory/2021_Fall_R/811_R/Staff_and_Affinity.RData")
+
+```
+
+## How would I visually represent them? 
+
+I plan to create three descriptive graphs.
+
+1. The summary statistics of independent and dependent variables
+
+I will highlight 'ave_ttl_super', 'ave_ttl_disbborr', 'log_meanexp' variables for my dependent variables and 'unga_us_imp' variable for my independent variable from the dataset labeled here 'Staff_ccode'. In the summary table, missing values are listed as “Unknown” in the table. 
+
+```{r}
+
+library(gtsummary)
+sum_dep <- Staff_ccode %>% select(ave_ttl_super, ave_ttl_disbborr, log_meanexp)
+sum_dep %>% tbl_summary(statistic = list(all_continuous() ~ "{mean} ({sd})"))
+
+sum_indep <- Staff_ccode %>% select(unga_us_imp)
+sum_indep %>% tbl_summary(statistic = list(all_continuous() ~ "{mean} ({sd})"))
+```
+For 'ave_ttl_super', the mean is 4.36, and the standard deviation is 0.91.
+
+As for 'ave_ttl_disbborr', the mean is 0.25, and the standard deviation is 0.09.
+
+'log_meanexp' variables has the mean of 0.27 and the standard deviation of 0.46.
+
+Concerning the independent variable 'unga_us_imp', the mean is 3.26, and the standard deviation is 0.83.
+
+
+2. The distribution of depedent and independent variables
+
+A boxplot is a standardized way of displaying the distribution of data based on a five number summary (“minimum”, first quartile (Q1), median, third quartile (Q3), and “maximum”).
+
+```{r}
+library("here")
+library("tidyverse")
+library("tidylog")
+library("ggplot2")
+
+ggplot(Staff_ccode, aes(x = " ", y = ave_ttl_super))+ 
+  geom_boxplot()+
+  labs(title="The boxplot of Staff Supervision",
+       x=" ", y = "Staff Supervision")
+
+```
+
+The boxplot of Staff Supervision shows that the median of this variable is around 4.7. 
+
+```{r}
+ggplot(Staff_ccode, aes(x = " ", y = ave_ttl_disbborr))+ 
+  geom_boxplot()+
+  labs(title="The boxplot of Staff Leniency",
+       x=" ", y = "Staff Leniency")
+
+```
+
+The boxplot of Staff Leniency presents that the median is less than the mean of 0.25. 
+
+```{r}
+ggplot(Staff_ccode, aes(x = " ", y = log_meanexp))+ 
+  geom_boxplot()+
+  labs(title="The boxplot of Staff Experience",
+       x=" ", y = "Staff Experience")
+
+```
+
+The boxplot of Staff Experience shows that median and minimum value are close to zero. 
+
+```{r}
+ggplot(Staff_ccode, aes(x = " ", y = unga_us_imp))+ 
+  geom_boxplot()+
+  labs(title="The boxplot of Affinity with the US",
+       x=" ", y = "Affinity with the US")
+
+```
+
+The boxplot of Affinity with the US presents that the median of this variable is around 3.2.
+
+
+3. Variation of Staff influence grouped by countries
+
+Three graph below presents the level of Staff supervision per state, the level of Staff leniency per state, and the level of Staff experience per state, respectively. It indicates there is a huge variation through country. 
+
+```{r}
+
+library(dplyr)
+
+ggplot(Staff_ccode, aes(x = ave_ttl_super, y = countryname)) + 
+  geom_bar(stat="identity")+
+  labs(title="The barplot of the level of Staff supervision per state",
+       x= "Staff supervision", y = "States")
+
+
+ggplot(Staff_ccode, aes(x = ave_ttl_disbborr, y = countryname)) + 
+  geom_bar(stat="identity")+
+  labs(title="The barplot of the level of Staff leniency per state",
+       x= "Staff leniency", y = "States")
+
+ggplot(Staff_ccode, aes(x = log_meanexp, y = countryname)) + 
+  geom_bar(stat="identity")+
+  labs(title="The barplot of the level of Staff experience per state",
+       x= "Staff experience", y = "States")
+
+
+```
+
+
+3. The correlation between Staff influence and the affinity with the U.S. using `ggplot2`.
+
+Three graph below presents the correlation between the level of Staff supervision and the affinity with the U.S., the correlation between the level of Staff leniency and the affinity with the U.S., and the correlation between the level of Staff experience and the affinity with the U.S., respectively. 
+
+```{r}
+
+
+ggplot(Staff_ccode, aes(x=ave_ttl_super, y=unga_us_imp)) +
+  geom_point(size=2, shape=23)+
+   labs(title="The correlation between Staff supervision and the affinity with the U.S.",
+       x="Staff supervision", y = "Affinity with the U.S.")
+
+ggplot(Staff_ccode, aes(x=ave_ttl_disbborr, y=unga_us_imp)) +
+  geom_point(size=2, shape=23)+
+   labs(title="The correlation between Staff supervision and the affinity with the U.S.",
+       x="Staff leniency", y = "Affinity with the U.S.")
+
+ggplot(Staff_ccode, aes(x=log_meanexp, y=unga_us_imp)) +
+  geom_point(size=2, shape=23)+
+   labs(title="The correlation between Staff supervision and the affinity with the U.S.",
+       x="Staff experience", y = "Affinity with the U.S.")
+```
+
